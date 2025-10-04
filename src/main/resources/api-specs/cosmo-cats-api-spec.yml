@@ -1,0 +1,342 @@
+openapi: 3.0.3
+info:
+  title: Cosmo Cats Intergalactic Marketplace API
+  description: API for managing cosmic products in the Cosmo Cats marketplace
+  version: 1.0.0
+  contact:
+    name: Cosmo Cats Team
+    email: support@cosmocats.com
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+
+paths:
+  /v1/api/products:
+    get:
+      summary: Get all products
+      description: Retrieve a list of all cosmic products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new product
+      description: Add a new cosmic product to the marketplace
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v1/api/products/{id}:
+    get:
+      summary: Get product by ID
+      description: Retrieve a specific cosmic product by its ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Product ID
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update product
+      description: Update an existing cosmic product
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Product ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete product
+      description: Remove a cosmic product from the marketplace
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Product ID
+      responses:
+        '204':
+          description: Product deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v1/api/products/debug-cosmic-validation:
+    post:
+      summary: Debug cosmic validation
+      description: Test the cosmic word validation logic
+      tags:
+        - Debug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Product name to test
+              required:
+                - name
+      responses:
+        '200':
+          description: Validation debug information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inputName:
+                    type: string
+                  lowercaseName:
+                    type: string
+                  isValid:
+                    type: boolean
+                  foundTerms:
+                    type: array
+                    items:
+                      type: string
+                  allCosmicTerms:
+                    type: array
+                    items:
+                      type: string
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the product
+          example: 1
+        name:
+          type: string
+          description: Name of the cosmic product
+          example: "Galaxy Star Ball"
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          description: Detailed description of the product
+          example: "Anti-gravity toy that floats like a star in the galaxy"
+          minLength: 10
+          maxLength: 500
+        price:
+          type: number
+          format: decimal
+          description: Price of the product
+          example: 29.99
+          minimum: 0.01
+        quantity:
+          type: integer
+          description: Available quantity in stock
+          example: 50
+          minimum: 0
+        category:
+          type: string
+          description: Product category
+          enum:
+            - ANTI_GRAVITY_TOYS
+            - COSMIC_FOOD
+            - SPACE_ACCESSORIES
+            - INTERGALACTIC_PETS
+          example: "ANTI_GRAVITY_TOYS"
+        status:
+          type: string
+          description: Product availability status
+          enum:
+            - AVAILABLE
+            - OUT_OF_STOCK
+            - DISCONTINUED
+          example: "AVAILABLE"
+
+    ProductInput:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - quantity
+        - category
+      properties:
+        name:
+          type: string
+          description: Name of the cosmic product (must contain cosmic terms)
+          example: "Cosmic Milk"
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          description: Detailed description of the product
+          example: "Nutritious milk from intergalactic cows"
+          minLength: 10
+          maxLength: 500
+        price:
+          type: number
+          format: decimal
+          description: Price of the product (must be greater than 0)
+          example: 15.50
+          minimum: 0.01
+        quantity:
+          type: integer
+          description: Available quantity in stock (cannot be negative)
+          example: 100
+          minimum: 0
+        category:
+          type: string
+          description: Product category
+          enum:
+            - ANTI_GRAVITY_TOYS
+            - COSMIC_FOOD
+            - SPACE_ACCESSORIES
+            - INTERGALACTIC_PETS
+          example: "COSMIC_FOOD"
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+        status:
+          type: integer
+          description: HTTP status code
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Detailed error message
+        path:
+          type: string
+          description: API endpoint path
+        fieldErrors:
+          type: object
+          description: Field-specific validation errors
+          additionalProperties:
+            type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request - Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: "2024-01-15T10:30:00Z"
+            status: 400
+            error: "Bad Request"
+            message: "Validation failed for object 'productDTO'"
+            path: "/v1/api/products"
+            fieldErrors:
+              name: "Product name must contain cosmic terms like 'star', 'galaxy', 'comet', etc."
+              price: "Price must be greater than 0"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: "2024-01-15T10:30:00Z"
+            status: 404
+            error: "Not Found"
+            message: "Product not found with id: 999"
+            path: "/v1/api/products/999"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            timestamp: "2024-01-15T10:30:00Z"
+            status: 500
+            error: "Internal Server Error"
+            message: "An unexpected error occurred"
+            path: "/v1/api/products"
+
+tags:
+  - name: Products
+    description: Product management operations
+  - name: Debug
+    description: Debug and testing endpoints
