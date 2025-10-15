@@ -130,9 +130,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(Long id) {
-        if (!products.containsKey(id)) {
-            throw new ProductNotFoundException("Product not found  - wrong  id: " + id);
-        }
+
         products.remove(id);
     }
 }
