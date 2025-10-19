@@ -66,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> listAllProducts() {
         return inMemoryProductStore.values().stream()
-                .map(productMapper::toDTO)
+                .map(productMapper::convertToProductDTO)
                 .collect(Collectors.toList());
     }
 
@@ -76,12 +76,12 @@ public class ProductServiceImpl implements ProductService {
         if (product == null) {
             throw new ProductNotFoundException("Product not found - wrong id: " + productId);
         }
-        return productMapper.toDTO(product);
+        return productMapper.convertToProductDTO(product);
     }
 
     @Override
     public ProductDTO createProduct(ProductDTO productRequestDTO) {
-        Product product = productMapper.toEntity(productRequestDTO);
+        Product product = productMapper.convertToProductEntity(productRequestDTO);
 
         Long newId = productIdGenerator.getAndIncrement();
         product.setId(newId);
@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         inMemoryProductStore.put(newId, product);
-        return productMapper.toDTO(product);
+        return productMapper.convertToProductDTO(product);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotFoundException("Product not found - wrong id: " + productId);
         }
 
-        productMapper.updateEntityFromDTO(productRequestDTO, productToUpdate);
+        productMapper.updateProductEntityFromDTO(productRequestDTO, productToUpdate);
 
         if (productRequestDTO.getCategory() != null) {
             Category category = new Category();
@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
 
         productToUpdate.setUpdatedAt(LocalDateTime.now());
         inMemoryProductStore.put(productId, productToUpdate);
-        return productMapper.toDTO(productToUpdate);
+        return productMapper.convertToProductDTO(productToUpdate);
     }
 
     @Override
