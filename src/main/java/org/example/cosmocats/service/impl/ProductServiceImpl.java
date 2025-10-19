@@ -19,38 +19,38 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final Map<Long, Product> products = new HashMap<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final Map<Long, Product> inMemoryProductStore = new HashMap<>();
+    private final AtomicLong productIdGenerator = new AtomicLong(1);
     private final ProductMapper productMapper;
 
     public ProductServiceImpl(ProductMapper productMapper) {
         this.productMapper = productMapper;
-        initializeMockData();
+        initializeSampleProducts();
     }
 
-    private void initializeMockData() {
-        createMockData("Galaxy Star Ball",
+    private void initializeSampleProducts() {
+        addSampleProduct("Galaxy Star Ball",
                 "Anti-gravity toy that floats in the galaxy",
                 new BigDecimal("29.99"), 50, CategoryType.ANTI_GRAVITY_TOYS);
 
-        createMockData("Cosmic Milk",
+        addSampleProduct("Cosmic Milk",
                 "Tasty milk from intergalactic store",
                 new BigDecimal("15.50"), 100, CategoryType.COSMIC_FOOD);
 
-        createMockData("Space Laser ",
+        addSampleProduct("Space Laser",
                 "Laser for intergalactic cat entertainment",
                 new BigDecimal("12.75"), 25, CategoryType.SPACE_THINGIES);
     }
 
-    private void createMockData(String name, String description, BigDecimal price,
-                                   Integer quantity, CategoryType categoryType) {
+    private void addSampleProduct(String name, String description,
+                                  BigDecimal price, Integer quantity, CategoryType categoryType) {
         Category category = new Category();
         category.setId(1L);
         category.setType(categoryType);
         category.setDescription(categoryType.name());
 
         Product product = new Product();
-        product.setId(idCounter.getAndIncrement());
+        product.setId(productIdGenerator.getAndIncrement());
         product.setName(name);
         product.setDescription(description);
         product.setPrice(price);
@@ -60,77 +60,71 @@ public class ProductServiceImpl implements ProductService {
         product.setCreatedAt(LocalDateTime.now());
         product.setUpdatedAt(LocalDateTime.now());
 
-        products.put(product.getId(), product);
+        inMemoryProductStore.put(product.getId(), product);
     }
 
     @Override
-    public List<ProductDTO> findAll() {
-        return products.values().stream()
+    public List<ProductDTO> listAllProducts() {
+        return inMemoryProductStore.values().stream()
                 .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ProductDTO findById(Long id) {
-        Product product = products.get(id);
+    public ProductDTO getProductById(Long productId) {
+        Product product = inMemoryProductStore.get(productId);
         if (product == null) {
-            throw new ProductNotFoundException("Product not found  - wrong  id: " + id);
+            throw new ProductNotFoundException("Product not found - wrong id: " + productId);
         }
         return productMapper.toDTO(product);
     }
 
     @Override
-    public ProductDTO create(ProductDTO productDTO) {
-        Product product = productMapper.toEntity(productDTO);
+    public ProductDTO createProduct(ProductDTO productRequestDTO) {
+        Product product = productMapper.toEntity(productRequestDTO);
 
-        Long newId = idCounter.getAndIncrement();
+        Long newId = productIdGenerator.getAndIncrement();
         product.setId(newId);
 
-
         Category category = new Category();
-        category.setType(CategoryType.valueOf(productDTO.getCategory()));
-        category.setDescription(productDTO.getCategory());
+        category.setType(CategoryType.valueOf(productRequestDTO.getCategory()));
+        category.setDescription(productRequestDTO.getCategory());
         product.setCategory(category);
 
-
-        if (productDTO.getStatus() == null || productDTO.getStatus().isBlank()) {
+        if (productRequestDTO.getStatus() == null || productRequestDTO.getStatus().isBlank()) {
             product.setStatus(ProductStatus.AVAILABLE);
         }
 
         product.setCreatedAt(LocalDateTime.now());
         product.setUpdatedAt(LocalDateTime.now());
 
-        products.put(newId, product);
+        inMemoryProductStore.put(newId, product);
         return productMapper.toDTO(product);
     }
 
     @Override
-    public ProductDTO update(Long id, ProductDTO productDTO) {
-        Product existingProduct = products.get(id);
-        if (existingProduct == null) {
-            throw new ProductNotFoundException("Product not found  - wrong  id: " + id);
+    public ProductDTO updateProduct(Long productId, ProductDTO productRequestDTO) {
+        Product productToUpdate = inMemoryProductStore.get(productId);
+        if (productToUpdate == null) {
+            throw new ProductNotFoundException("Product not found - wrong id: " + productId);
         }
 
+        productMapper.updateEntityFromDTO(productRequestDTO, productToUpdate);
 
-        productMapper.updateEntityFromDTO(productDTO, existingProduct);
-
-
-        if (productDTO.getCategory() != null) {
+        if (productRequestDTO.getCategory() != null) {
             Category category = new Category();
-            category.setType(CategoryType.valueOf(productDTO.getCategory()));
-            category.setDescription(productDTO.getCategory());
-            existingProduct.setCategory(category);
+            category.setType(CategoryType.valueOf(productRequestDTO.getCategory()));
+            category.setDescription(productRequestDTO.getCategory());
+            productToUpdate.setCategory(category);
         }
 
-        existingProduct.setUpdatedAt(LocalDateTime.now());
-
-        products.put(id, existingProduct);
-        return productMapper.toDTO(existingProduct);
+        productToUpdate.setUpdatedAt(LocalDateTime.now());
+        inMemoryProductStore.put(productId, productToUpdate);
+        return productMapper.toDTO(productToUpdate);
     }
 
     @Override
-    public void delete(Long id) {
-
-        products.remove(id);
+    public void deleteProduct(Long productId) {
+        inMemoryProductStore.remove(productId);
     }
 }
