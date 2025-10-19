@@ -14,34 +14,37 @@ import java.util.List;
 )
 public interface ProductMapper {
 
+  
     @Mapping(source = "category.type", target = "category")
-    ProductDTO toDTO(Product product);
+    ProductDTO convertToProductDTO(Product productEntity);
 
+ 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Product toEntity(ProductDTO productDTO);
+    Product convertToProductEntity(ProductDTO productDTO);
 
-    List<ProductDTO> toDTOList(List<Product> products);
+   
+    List<ProductDTO> convertToProductDTOList(List<Product> productEntities);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    void updateEntityFromDTO(ProductDTO dto, @MappingTarget Product entity);
+    void updateProductEntityFromDTO(ProductDTO updatedProductData, @MappingTarget Product existingProduct);
 
-
-    @Named("statusToString")
-    default String statusToString(ProductStatus status) {
-        return status != null ? status.name() : null;
+  
+    @Named("mapStatusEnumToString")
+    default String mapStatusEnumToString(ProductStatus productStatus) {
+        return productStatus != null ? productStatus.name() : null;
     }
 
-
-    @Named("stringToStatus")
-    default ProductStatus stringToStatus(String status) {
-        if (status == null || status.isBlank()) {
+    
+    @Named("mapStringToStatusEnum")
+    default ProductStatus mapStringToStatusEnum(String statusValue) {
+        if (statusValue == null || statusValue.isBlank()) {
             return null;
         }
-        return ProductStatus.valueOf(status.trim().toUpperCase());
+        return ProductStatus.valueOf(statusValue.trim().toUpperCase());
     }
 }
