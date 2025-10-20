@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.cosmocats.dto.validation.CosmicWordCheck;
+import org.example.cosmocats.dto.validation.ValidCategory;
 
 import java.math.BigDecimal;
 
@@ -36,8 +37,7 @@ public class ProductDTO {
     private Integer quantity;
 
     @NotBlank(message = "Category is required")
-    @Pattern(regexp = "ANTI_GRAVITY_TOYS|COSMIC_FOOD|SPACE_ACCESSORIES|INTERGALACTIC_PETS",
-            message = "Category must be one of: ANTI_GRAVITY_TOYS, COSMIC_FOOD, SPACE_ACCESSORIES, INTERGALACTIC_PETS")
+    @ValidCategory
     private String category;
 
     @Pattern(regexp = "AVAILABLE|OUT_OF_STOCK|DISCONTINUED",
