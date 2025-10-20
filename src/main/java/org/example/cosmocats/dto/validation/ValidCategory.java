@@ -2,17 +2,14 @@ package org.example.cosmocats.dto.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import jakarta.validation.constraints.Pattern;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {})
-@Pattern(regexp = "ANTI_GRAVITY_TOYS|COSMIC_FOOD|SPACE_THINGIES",
-        message = "Category must be : ANTI_GRAVITY_TOYS, COSMIC_FOOD, SPACE_THINGIES")
+@Constraint(validatedBy = CategoryValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidCategory {
-    String message() default "Invalid category";
+    String message() default "Invalid category. Allowed values: ANTI_GRAVITY_TOYS, COSMIC_FOOD, SPACE_THINGIES";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
