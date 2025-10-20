@@ -106,7 +106,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO updateProduct(Long productId, ProductDTO productRequestDTO) {
         Product productToUpdate = inMemoryProductStore.get(productId);
         if (productToUpdate == null) {
-            throw new ProductNotFoundException("Product not found - wrong id: " + productId);
+            throw new ProductNotFoundException(
+                    String.format("Product not found - wrong id: %d", productId)
+            );
         }
 
         productMapper.updateProductEntityFromDTO(productRequestDTO, productToUpdate);
@@ -120,6 +122,7 @@ public class ProductServiceImpl implements ProductService {
 
         productToUpdate.setUpdatedAt(LocalDateTime.now());
         inMemoryProductStore.put(productId, productToUpdate);
+
         return productMapper.convertToProductDTO(productToUpdate);
     }
 
