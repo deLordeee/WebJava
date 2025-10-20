@@ -2,9 +2,12 @@ package org.example.cosmocats.dto.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public class CosmicWordValidator implements ConstraintValidator<CosmicWordCheck, String> {
 
     private static final List<String> COSMIC_TERMS = Arrays.asList(
@@ -14,8 +17,6 @@ public class CosmicWordValidator implements ConstraintValidator<CosmicWordCheck,
             "moon", "sun", "universe", "cosmos"
     );
 
-
-
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.trim().isEmpty()) {
@@ -24,21 +25,20 @@ public class CosmicWordValidator implements ConstraintValidator<CosmicWordCheck,
 
         String lowerCaseValue = value.toLowerCase().trim();
 
-        // Debug output (remove in production)
-        System.out.println("--- COSMIC VALIDATION ---");
-        System.out.println("Input: " + value);
-        System.out.println("Lowercase: " + lowerCaseValue);
+        log.debug("--- COSMIC VALIDATION ---");
+        log.debug("Input: {}", value);
+        log.debug("Lowercase: {}", lowerCaseValue);
 
         boolean valid = COSMIC_TERMS.stream().anyMatch(term -> {
             boolean contains = lowerCaseValue.contains(term);
             if (contains) {
-                System.out.println("Found  term: " + term);
+                log.debug("Found term: {}", term);
             }
             return contains;
         });
 
-        System.out.println("Validation result: " + valid);
-        System.out.println("-----------------------------");
+        log.debug("Validation result: {}", valid);
+        log.debug("-----------------------------");
 
         return valid;
     }
