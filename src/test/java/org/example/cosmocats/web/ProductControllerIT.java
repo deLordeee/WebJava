@@ -1,4 +1,4 @@
-package org.example.cosmocats.controller;
+package org.example.cosmocats.web;
 
 
 
