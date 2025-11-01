@@ -1,4 +1,4 @@
-package org.example.cosmocats.service.impl;
+package org.example.cosmocats.service;
 
 
 
