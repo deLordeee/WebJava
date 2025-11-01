@@ -43,7 +43,8 @@ jobs:
         with:
           cache-disabled: true
           generate-job-summary: false
-
+      - name: Run tests with coverage
+        run: ./gradlew clean test jacocoTestReport
       # Upload the JaCoCo test coverage report
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
