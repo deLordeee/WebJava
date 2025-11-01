@@ -17,11 +17,11 @@ jobs:
         uses: actions/checkout@v3
 
       # Set up JDK 17 (you can change to another version if needed)
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       # Cache Gradle dependencies
       - name: Cache Gradle dependencies
