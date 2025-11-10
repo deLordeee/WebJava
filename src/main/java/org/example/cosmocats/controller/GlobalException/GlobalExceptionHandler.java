@@ -65,4 +65,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(problemDetail, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(FeatureToggleNotEnabledException.class)
+    public ResponseEntity<String> handleFeatureToggleNotEnabled(FeatureToggleNotEnabledException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
