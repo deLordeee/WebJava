@@ -1,5 +1,6 @@
 package org.example.cosmocats.controller.GlobalException;
 
+import org.example.cosmocats.featuretoggle.exception.FeatureToggleNotEnabledException;
 import org.example.cosmocats.service.exception.ProductNotFoundException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
