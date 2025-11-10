@@ -2,6 +2,7 @@ package org.example.cosmocats.featuretoggle;
 
 
 
+import org.example.cosmocats.config.FeatureToggleProperties;
 import org.example.cosmocats.featuretoggle.annotation.DisabledFeatureToggle;
 import org.example.cosmocats.featuretoggle.annotation.EnabledFeatureToggle;
 import org.junit.jupiter.api.extension.AfterEachCallback;
