@@ -51,10 +51,12 @@ public class FeatureToggleExtension implements BeforeEachCallback, AfterEachCall
         });
     }
 
-    private boolean getFeatureNamePropertyAsBoolean(ExtensionContext context, String featureName) {
-        Environment environment = SpringExtension.getApplicationContext(context).getEnvironment();
-        return environment.getProperty("feature." + featureName, Boolean.class, Boolean.FALSE);
-    }
+   private boolean getFeatureNamePropertyAsBoolean(ExtensionContext context, String featureName) {
+    FeatureToggleProperties properties = SpringExtension.getApplicationContext(context)
+            .getBean(FeatureToggleProperties.class);
+    
+    return properties.getToggles().getOrDefault(featureName, false);
+}
 
     private FeatureToggleService getFeatureToggleService(ExtensionContext context) {
         return SpringExtension.getApplicationContext(context).getBean(FeatureToggleService.class);
