@@ -34,7 +34,7 @@ class CosmoCatServiceTest {
         cosmoCatService = new CosmoCatService();
         featureToggleAspect = new FeatureToggleAspect(featureToggleService);
 
-        // Create a proxy that applies the aspect to our service
+        // Trying to immulate some sort of proxy for aspect?
         AspectJProxyFactory proxyFactory = new AspectJProxyFactory(cosmoCatService);
         proxyFactory.addAspect(featureToggleAspect);
         proxiedService = proxyFactory.getProxy();
