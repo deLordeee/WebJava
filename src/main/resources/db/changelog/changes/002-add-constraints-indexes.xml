@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="002-1" author="cosmocats">
+        <comment>Add unique constraint for product name within category</comment>
+
+        <addUniqueConstraint
+                tableName="products"
+                columnNames="name, category_id"
+                constraintName="uq_product_name_category"
+                deferrable="false"
+                disabled="false"
+                initiallyDeferred="false"/>
+    </changeSet>
+
+    <changeSet id="002-2" author="cosmocats">
+        <comment>Create index for product name</comment>
+
+        <createIndex
+                tableName="products"
+                indexName="idx_products_name"
+                unique="false">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-3" author="cosmocats">
+        <comment>Create additional indexes for better performance</comment>
+
+        <createIndex
+                tableName="products"
+                indexName="idx_products_category_status"
+                unique="false">
+            <column name="category_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex
+                tableName="products"
+                indexName="idx_products_created_at"
+                unique="false">
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex
+                tableName="orders"
+                indexName="idx_orders_status_date"
+                unique="false">
+            <column name="status"/>
+            <column name="order_date"/>
+        </createIndex>
+
+        <createIndex
+                tableName="order_products"
+                indexName="idx_order_products_order_id"
+                unique="false">
+            <column name="order_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
