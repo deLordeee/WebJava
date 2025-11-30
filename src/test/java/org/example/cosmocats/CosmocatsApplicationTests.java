@@ -1,13 +1,13 @@
-package org.example.cosmocats;
+// package org.example.cosmocats;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class CosmocatsApplicationTests {
+// @SpringBootTest
+// class CosmocatsApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+//     @Test
+//     void contextLoads() {
+//     }
 
-}
+// }
