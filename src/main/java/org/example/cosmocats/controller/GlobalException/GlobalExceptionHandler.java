@@ -1,5 +1,6 @@
 package org.example.cosmocats.controller.GlobalException;
 
+import org.example.cosmocats.featuretoggle.exception.FeatureToggleNotEnabledException;
 import org.example.cosmocats.service.exception.ProductNotFoundException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
@@ -64,5 +65,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("path", request.getDescription(false).replace("uri=", ""));
 
         return new ResponseEntity<>(problemDetail, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(FeatureToggleNotEnabledException.class)
+    public ResponseEntity<Object> handleFeatureToggleNotEnabled(
+        FeatureToggleNotEnabledException ex, WebRequest request) {
+    
+    ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+    problemDetail.setTitle("Feature Not Enabled");
+    problemDetail.setDetail(ex.getMessage());
+    problemDetail.setProperty("timestamp", LocalDateTime.now());
+    problemDetail.setProperty("path", request.getDescription(false).replace("uri=", ""));
+    
+    return new ResponseEntity<>(problemDetail, HttpStatus.NOT_FOUND);
     }
 }

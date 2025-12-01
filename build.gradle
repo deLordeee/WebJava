@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.barfuin.gradle.jacocolog' version '3.1.0'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+description = 'cosmocats'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// === Custom coverage thresholds and exclusions ===
+ext {
+    minimumCoveragePerFile = 0.0
+    filesExcludedFromCoverage = [
+            "**/*CosmocatsApplication.*",
+            "**/config/*Configuration.*"
+    ]
+}
+
+// === Repositories ===
+repositories {
+    mavenCentral()
+}
+
+// === Dependencies ===
+ext {
+    mapstructVersion = '1.6.3'
+    lombokVersion = '1.18.30'
+    lombokMapstructBindingVersion = '0.2.0'
+}
+
+dependencies {
+    // Spring Boot core
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    // MapStruct + Lombok
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// === Gradle includes ===
+apply from: "${rootProject.projectDir}/gradle/test.gradle"
+apply from: "${rootProject.projectDir}/gradle/jacoco.gradle"
