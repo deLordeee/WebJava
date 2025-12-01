@@ -9,29 +9,38 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@Setter
-@Configuration
 @ConfigurationProperties(prefix = "feature")
 public class FeatureToggleProperties {
-    private CosmoCats cosmoCats;
-    private KittyProducts kittyProducts;
+    private final CosmoCats cosmoCats;
+    private final KittyProducts kittyProducts;
 
-    @Getter
-    @Setter
-    public static class CosmoCats {
-        private boolean enabled;
+    public FeatureToggleProperties(CosmoCats cosmoCats, KittyProducts kittyProducts) {
+        this.cosmoCats = cosmoCats;
+        this.kittyProducts = kittyProducts;
     }
 
     @Getter
-    @Setter
+    public static class CosmoCats {
+        private final boolean enabled;
+
+        public CosmoCats(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    @Getter
     public static class KittyProducts {
-        private boolean enabled;
+        private final boolean enabled;
+
+        public KittyProducts(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 
     public Map<String, Boolean> getToggles() {
-        Map<String, Boolean> toggles = new HashMap<>();
-        toggles.put("cosmo-cats", cosmoCats != null && cosmoCats.isEnabled());
-        toggles.put("kitty-products", kittyProducts != null && kittyProducts.isEnabled());
-        return toggles;
+        return Map.of(
+            "cosmo-cats", cosmoCats != null && cosmoCats.isEnabled(),
+            "kitty-products", kittyProducts != null && kittyProducts.isEnabled()
+        );
     }
 }
