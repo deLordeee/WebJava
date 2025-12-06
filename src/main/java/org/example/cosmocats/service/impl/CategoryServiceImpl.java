@@ -1,5 +1,6 @@
 package org.example.cosmocats.service.impl;
 
+import jakarta.persistence.PersistenceException;
 import org.example.cosmocats.repository.entity.CategoryEntity;
 import org.example.cosmocats.common.CategoryType;
 import org.example.cosmocats.repository.CategoryRepository;
@@ -55,21 +56,31 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findByDescriptionContaining(keyword);
     }
 
+
+
     @Override
     public CategoryEntity updateCategory(Long categoryId, CategoryEntity category) {
-        CategoryEntity existingCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + categoryId));
+        try {
+            CategoryEntity existingCategory = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + categoryId));
 
+            Optional<CategoryEntity> categoryWithSameType = categoryRepository.findByType(category.getType());
+            if (categoryWithSameType.isPresent() && !categoryWithSameType.get().getId().equals(categoryId)) {
+                throw new RuntimeException("Another category with type " + category.getType() + " already exists");
+            }
 
-        Optional<CategoryEntity> categoryWithSameType = categoryRepository.findByType(category.getType());
-        if (categoryWithSameType.isPresent() && !categoryWithSameType.get().getId().equals(categoryId)) {
-            throw new RuntimeException("Another category with type " + category.getType() + " already exists");
+            existingCategory.setType(category.getType());
+            existingCategory.setDescription(category.getDescription());
+
+            return categoryRepository.save(existingCategory);
+
+        } catch (CategoryNotFoundException  ex) {
+
+            throw ex;
+        } catch (Exception ex) {
+
+            throw new PersistenceException("Error updating category with id: " + categoryId, ex);
         }
-
-        existingCategory.setType(category.getType());
-        existingCategory.setDescription(category.getDescription());
-
-        return categoryRepository.save(existingCategory);
     }
 
     @Override
