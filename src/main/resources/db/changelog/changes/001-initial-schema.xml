@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="001-1" author="cosmocats">
+        <comment>Create sequences for all tables</comment>
+
+        <createSequence sequenceName="categories_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="products_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="orders_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="order_products_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="001-2" author="cosmocats">
+        <comment>Create categories table</comment>
+
+        <createTable tableName="categories">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="categories_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-3" author="cosmocats">
+        <comment>Create products table</comment>
+
+        <createTable tableName="products">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="products_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_products_category"
+                             references="categories(id)"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="AVAILABLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-4" author="cosmocats">
+        <comment>Create orders table</comment>
+
+        <createTable tableName="orders">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="orders_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="total_amount" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-5" author="cosmocats">
+        <comment>Create order_products junction table</comment>
+
+        <createTable tableName="order_products">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="order_products_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_order_products_order"
+                             references="orders(id)"/>
+            </column>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_order_products_product"
+                             references="products(id)"/>
+            </column>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price_at_order" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
