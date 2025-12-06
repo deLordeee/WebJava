@@ -1,5 +1,6 @@
 package org.example.cosmocats.service;
 
+import jakarta.persistence.PersistenceException;
 import org.example.cosmocats.common.CategoryType;
 import org.example.cosmocats.repository.CategoryRepository;
 import org.example.cosmocats.repository.entity.CategoryEntity;
@@ -252,7 +253,6 @@ class CategoryServiceImplTest {
 
     @Test
     void updateCategory_WithDuplicateType_ThrowsException() {
-
         CategoryEntity existingCategory = new CategoryEntity();
         existingCategory.setId(1L);
         existingCategory.setType(CategoryType.ANTI_GRAVITY_TOYS);
@@ -270,7 +270,10 @@ class CategoryServiceImplTest {
 
 
         assertThatThrownBy(() -> categoryService.updateCategory(1L, updatedData))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(PersistenceException.class)
+                .hasMessage("Error updating category with id: 1")
+                .hasCauseInstanceOf(RuntimeException.class)
+                .cause()
                 .hasMessageContaining("Another category with type COSMIC_FOOD already exists");
 
         verify(categoryRepository).findById(1L);
