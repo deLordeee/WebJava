@@ -14,6 +14,7 @@ import org.example.cosmocats.repository.CategoryRepository;
 import org.example.cosmocats.repository.ProductRepository;
 import org.example.cosmocats.service.ProductService;
 import org.example.cosmocats.service.exception.ProductNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'API_USER')")
     public List<ProductDTO> listAllProducts() {
         return productRepository.findAll().stream()
                 .map(productEntityMapper::convertToProductDTO)
@@ -96,6 +98,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'API_USER')")
     public ProductDTO getProductById(Long productId) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found - wrong id: " + productId));
@@ -103,6 +106,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'API_USER')")
     public ProductDTO createProduct(ProductDTO productRequestDTO) {
 
         CategoryEntity category = categoryRepository.findByType(
@@ -131,6 +135,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'API_USER')")
     public ProductDTO updateProduct(Long productId, ProductDTO productRequestDTO) {
         ProductEntity productToUpdate = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found - wrong id: " + productId));
@@ -151,6 +156,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(Long productId) {
         if (!productRepository.existsById(productId)) {
             throw new ProductNotFoundException("Product not found - wrong id: " + productId);

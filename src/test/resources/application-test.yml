@@ -1,6 +1,5 @@
+
 spring:
-  application:
-    name: "cosmocats"
   jpa:
     show-sql: true
     open-in-view: false
@@ -15,26 +14,42 @@ spring:
         connection.provider_disables_autocommit: true
     hibernate:
       ddl-auto: none
+
   datasource:
     hikari:
       auto-commit: false
       connection-timeout: 30000
       maximum-pool-size: 10
       max-lifetime: 1800000
-      pool-name: cosmocats-pool
+      pool-name: cosmocats-test-pool
+
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     enabled: true
 
+# Feature flags
 feature:
   cosmo-cats:
     enabled: true
   kitty-products:
     enabled: false
 
+# Security configuration for tests
+app:
+  security:
+    enabled: true
+    api-key-header: X-API-KEY
+    api-key: test-api-key-123
+    jwt:
+      secret: test-jwt-secret-key-for-cosmo-cats-testing-environment-123456
+      roles-claim: roles
+
+# Logging
 logging:
   level:
     org.springframework: INFO
+    org.springframework.security: DEBUG
+    org.example.cosmocats: DEBUG
     liquibase: INFO
     org.hibernate: INFO
     org.testcontainers: INFO

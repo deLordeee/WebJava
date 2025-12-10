@@ -1,0 +1,13 @@
+
+spring:
+  config:
+    activate:
+      on-profile: no-auth
+
+app:
+  security:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.security: WARN
