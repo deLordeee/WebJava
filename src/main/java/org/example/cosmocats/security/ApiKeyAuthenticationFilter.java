@@ -37,20 +37,19 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // CRITICAL FIX: Check if JWT Bearer token is present - if so, skip API key validation
-        // This ensures JWT takes precedence over API key authentication
+   
         String authorizationHeader = request.getHeader("Authorization");
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-            // JWT token is present, let it be handled by oauth2ResourceServer
+         
             filterChain.doFilter(request, response);
             return;
         }
 
-        // No JWT token present, proceed with API key authentication
+
         String apiKey = request.getHeader(securityProperties.getApiKeyHeader());
 
         if (!StringUtils.hasText(apiKey)) {
-            // No API key either, continue to next filter (will be rejected later if required)
+       
             filterChain.doFilter(request, response);
             return;
         }
