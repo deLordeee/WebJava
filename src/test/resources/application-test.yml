@@ -1,4 +1,4 @@
-# Fixed application-test.yml - removed spring.profiles.include
+
 spring:
   jpa:
     show-sql: true
