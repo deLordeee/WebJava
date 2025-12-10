@@ -60,7 +60,7 @@ class JwtSecurityTest {
 
     private SecretKey secretKey;
 
-    // Use the actual endpoint from CosmoCatController
+  
     private static final String TEST_ENDPOINT = "/api/v1/cosmocats";
 
     @BeforeEach
@@ -70,7 +70,7 @@ class JwtSecurityTest {
         secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
     }
 
-    // ============= JWT Token Generation Tests =============
+  
 
     @Test
     @DisplayName("Should access protected endpoint with valid JWT token")
@@ -105,8 +105,7 @@ class JwtSecurityTest {
                 .andExpect(status().isOk());
     }
 
-    // ============= JWT Token Validation Tests =============
-
+ 
     @Test
     @DisplayName("Should reject request without JWT token")
     void shouldRejectRequestWithoutToken() throws Exception {
@@ -168,7 +167,7 @@ class JwtSecurityTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    // ============= API Key Tests =============
+  
 
     @Test
     @DisplayName("Should access protected endpoint with valid API key")
@@ -202,15 +201,8 @@ class JwtSecurityTest {
                 .andExpect(status().isOk());
     }
 
-    // ============= Public Endpoints Tests =============
 
 
-
-
-
-
-
-    // ============= Token Claims Tests =============
 
     @Test
     @DisplayName("Should extract correct user from JWT token")
@@ -252,7 +244,7 @@ class JwtSecurityTest {
                 .andExpect(status().isOk());
     }
 
-    // ============= CORS Tests =============
+  
 
     @Test
     @DisplayName("Should handle CORS preflight request")
@@ -265,7 +257,7 @@ class JwtSecurityTest {
                 .andExpect(header().exists(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
     }
 
-    // ============= Helper Methods =============
+
 
     private String generateValidToken(String subject, List<String> roles) {
         Instant now = Instant.now();
