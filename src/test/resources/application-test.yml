@@ -1,4 +1,3 @@
-
 spring:
   jpa:
     show-sql: true
@@ -35,13 +34,16 @@ feature:
     enabled: false
 
 # Security configuration for tests
+# These are test-only secrets - still need to meet minimum length requirements
 app:
   security:
     enabled: true
     api-key-header: X-API-KEY
-    api-key: test-api-key-123
+    # 32+ characters required
+    api-key: test-api-key-with-at-least-32-characters-for-validation
     jwt:
-      secret: test-jwt-secret-key-for-cosmo-cats-testing-environment-123456
+      # 64+ characters required
+      secret: test-jwt-secret-key-for-cosmocats-testing-environment-with-minimum-64-characters-required
       roles-claim: roles
 
 # Logging
