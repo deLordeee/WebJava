@@ -60,7 +60,7 @@ class JwtSecurityTest {
 
     private SecretKey secretKey;
 
-  
+
     private static final String TEST_ENDPOINT = "/api/v1/cosmocats";
 
     @BeforeEach
@@ -70,7 +70,7 @@ class JwtSecurityTest {
         secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
     }
 
-  
+
 
     @Test
     @DisplayName("Should access protected endpoint with valid JWT token")
@@ -105,7 +105,8 @@ class JwtSecurityTest {
                 .andExpect(status().isOk());
     }
 
- 
+
+
     @Test
     @DisplayName("Should reject request without JWT token")
     void shouldRejectRequestWithoutToken() throws Exception {
@@ -167,7 +168,7 @@ class JwtSecurityTest {
                 .andExpect(status().isUnauthorized());
     }
 
-  
+
 
     @Test
     @DisplayName("Should access protected endpoint with valid API key")
@@ -200,7 +201,6 @@ class JwtSecurityTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-
 
 
 
@@ -244,7 +244,7 @@ class JwtSecurityTest {
                 .andExpect(status().isOk());
     }
 
-  
+
 
     @Test
     @DisplayName("Should handle CORS preflight request")
