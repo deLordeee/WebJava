@@ -50,16 +50,22 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints - no authentication required
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/actuator/health",
-                                "/actuator/info",
                                 "/error"
                         ).permitAll()
+
+                        // Actuator endpoints - require authentication
+                        // Health and info are safe to expose, but others require ADMIN role
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
+
+                        // All other endpoints require authentication (any valid user)
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
